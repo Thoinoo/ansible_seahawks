@@ -1,0 +1,7 @@
+---
+# Handler pour redémarrer le service isc-dhcp-server
+- name: Restart DHCP service
+  service:
+    name: isc-dhcp-server
+    state: restarted
+    enabled: true

@@ -1,0 +1,22 @@
+options {
+    directory "/var/cache/bind";  # Répertoire des fichiers de cache de BIND
+
+    // Activer les résolutions DNS
+    recursion yes;   # Permet la récursion pour les clients
+    allow-query { any; };  # Autorise les requêtes depuis n'importe quelle adresse
+
+    // Serveur DNS qui résout en cas de requêtes externes
+    forwarders {
+        8.8.8.8;  # Serveur DNS de Google
+        8.8.4.4;  # Serveur DNS de Google
+    };
+
+    listen-on { any; };  # Écouter sur toutes les interfaces
+    listen-on-v6 { any; };  # Écouter aussi en IPv6
+
+    // Sécurisation DNS
+    dnssec-validation auto;  # Validation DNSSEC automatique
+
+    auth-nxdomain no;  # Bloquer la réponse NXDOMAIN pour les clients non autorisés
+    listen-on-v6 { none; };  # Ne pas écouter sur IPv6 (à ajuster selon ton besoin)
+};

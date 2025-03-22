@@ -1,0 +1,49 @@
+[dns]
+dnssiege ansible_host=10.0.0.2
+dnsroubaix ansible_host=10.1.0.2
+
+[dhcp]
+dhcpsiege ansible_host=10.0.0.2
+dhcproubaix ansible_host=10.1.0.2
+
+[dhcp:vars]
+# Variables pour siege (10.0.0.0/24)
+dhcp_subnet_siege="10.0.0.0"
+dhcp_mask_siege="255.255.255.0"
+dhcp_range_start_siege="10.0.0.100"
+dhcp_range_end_siege="10.0.0.200"
+dhcp_routers_siege="10.0.0.1"
+dhcp_dns_siege="10.0.0.2, 10.1.0.2"
+
+# Variables pour roubaix (10.1.0.0/24)
+dhcp_subnet_roubaix="10.1.0.0"
+dhcp_mask_roubaix="255.255.255.0"
+dhcp_range_start_roubaix="10.1.0.100"
+dhcp_range_end_roubaix="10.1.0.200"
+dhcp_routers_roubaix="10.1.0.1"
+dhcp_dns_roubaix="10.1.0.2, 10.0.0.2"
+
+[hostname]
+dnssiege ansible_host=10.0.0.2
+dnsroubaix ansible_host=10.1.0.2
+
+[hostname:vars]
+# dnssiege
+hostname_dns_siege="dnssiege"
+# dnsroubaix
+hostname_dns_roubaix="dnsroubaix"
+
+[linux]
+srv1 ansible_host=192.168.200.103 ansible_port=22
+#srv2 ansible_host=192.168.200.104
+
+[group1]
+srv1 ansible_host=192.168.200.103
+
+[group2]
+#srv2 ansible_host=192.168.200.104
+
+[group3:children]
+group1
+group2
+

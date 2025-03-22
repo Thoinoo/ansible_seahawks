@@ -1,0 +1,91 @@
+---    
+# 1. Installer le paquet ISC DHCP Server
+- name: Installer le paquet isc-dhcp-server
+  apt:
+    name: isc-dhcp-server
+    state: present
+    update_cache: yes
+
+# 2. copier les conf
+- name: Copier le fichier de configuration dhcpd.conf pour siege
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  when: inventory_hostname == 'dhcpsiege'
+  vars:
+    dhcp_subnet: "{{ dhcp_subnet_siege }}"
+    dhcp_mask: "{{ dhcp_mask_siege }}"
+    dhcp_range_start: "{{ dhcp_range_start_siege }}"
+    dhcp_range_end: "{{ dhcp_range_end_siege }}"
+    dhcp_routers: "{{ dhcp_routers_siege }}"
+    dhcp_dns: "{{ dhcp_dns_siege }}"
+  notify: Restart DHCP service
+
+- name: Copier le fichier de configuration dhcpd.conf pour roubaix
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  when: inventory_hostname == 'dhcproubaix'
+  vars:
+    dhcp_subnet: "{{ dhcp_subnet_roubaix }}"
+    dhcp_mask: "{{ dhcp_mask_roubaix }}"
+    dhcp_range_start: "{{ dhcp_range_start_roubaix }}"
+    dhcp_range_end: "{{ dhcp_range_end_roubaix }}"
+    dhcp_routers: "{{ dhcp_routers_roubaix }}"
+    dhcp_dns: "{{ dhcp_dns_roubaix }}"
+  notify: Restart DHCP service
+
+# 3. Configurer l'interface réseau dans /etc/default/isc-dhcp-server
+- name: Configurer l'interface réseau dans /etc/default/isc-dhcp-server
+  lineinfile:
+    path: /etc/default/isc-dhcp-server
+    regexp: '^INTERFACESv4='
+    line: 'INTERFACESv4="ens18"'  # Remplacer par l'interface souhaitée
+  notify: Restart DHCP service
+
+# # 4. Configurer les options DHCP supplémentaires (facultatif)
+# - name: Ajouter des options DHCP personnalisées
+#   blockinfile:
+#     path: /etc/dhcp/dhcpd.conf
+#     marker: "# {mark} Ansible Custom DHCP Options"
+#     block: |
+#       option domain-name "nfl-it.local";
+#       option domain-name-servers 10.0.0.2, 10.0.0.3;
+#       option routers 10.0.0.1;
+#       option subnet-mask 255.255.255.0;
+#       default-lease-time 600;
+#       max-lease-time 7200;
+#   notify: restart dhcp service
+
+# # 5. Configurer les réservations d'adresses IP (facultatif)
+# - name: Ajouter des réservations DHCP
+#   blockinfile:
+#     path: /etc/dhcp/dhcpd.conf
+#     marker: "# {mark} Ansible DHCP Reservations"
+#     block: |
+#       host serveur1 {
+#         hardware ethernet 00:11:22:33:44:55;  # Remplacer par l'adresse MAC de l'appareil
+#         fixed-address 10.0.0.10;
+#       }
+#   notify: restart dhcp service
+
+# # 6. Redémarrer le service ISC DHCP Server
+# - name: Redémarrer le service isc-dhcp-server
+#   service:
+#     name: isc-dhcp-server
+#     state: restarted
+#     enabled: true
+#   when: ansible_facts['distribution'] == "Debian"
+
+# # 7. Vérifier le statut du service ISC DHCP Server
+# - name: Vérifier le statut du service isc-dhcp-server
+#   service_facts:
+
+# # 8. Mettre à jour le pare-feu (facultatif)
+# - name: Ouvrir les ports DHCP dans le pare-feu
+#   ufw:
+#     rule: allow
+#     name: 'DHCP'
+#     port: '67,68'
+#     proto: udp
+#   when: ansible_facts['distribution'] == "Debian"

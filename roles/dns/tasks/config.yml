@@ -1,0 +1,64 @@
+---
+- name: Installer le paquet bind9
+  apt:
+    name: bind9
+    state: present
+    update_cache: yes
+
+- name: Installer les outils de gestion BIND9
+  apt:
+    name: bind9utils
+    state: present
+
+- name: Installer le paquet resolvconf
+  apt:
+    name: resolvconf
+    state: present
+
+- name: Activer et démarrer le service bind9
+  systemd:
+    name: bind9
+    enabled: yes
+    state: started
+
+- name: Copier le fichier de configuration BIND9 (named.conf.options)
+  copy:
+    src: named.conf.options
+    dest: /etc/bind/named.conf.options
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copier le fichier de configuration BIND9 (named.conf.local)
+  copy:
+    src: named.conf.local
+    dest: /etc/bind/named.conf.local
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copier la zone DNS db.nfl-it.local
+  copy:
+    src: db.nfl-it.local
+    dest: /etc/bind/db.nfl-it.local
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Vérifier la configuration de Bind9
+  command: named-checkconf
+  register: check_config
+  failed_when: check_config.rc != 0
+  changed_when: false
+
+- name: Vérifier la zone DNS
+  command: named-checkzone zone.local /etc/bind/db.nfl-it.local
+  register: check_zone
+  failed_when: check_zone.rc != 0
+  changed_when: false
+
+- name: Redémarrer Bind9 pour appliquer les configurations
+  systemd:
+    name: bind9
+    state: restarted
+

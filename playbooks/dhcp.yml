@@ -1,0 +1,8 @@
+---
+- name: dhcp config
+  hosts: dhcp
+  user: ansible
+  become: true
+
+  roles:
+    - ../roles/dhcp

@@ -1,0 +1,8 @@
+---
+- name: ("{{ package }}" | "{{ state }}")
+  ansible.builtin.apt:
+    name: "{{ package }}"
+    state: "{{ state }}"
+
+- name: test
+  ansible.builtin.include_tasks: test.yml

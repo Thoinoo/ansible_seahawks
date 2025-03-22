@@ -1,0 +1,18 @@
+# all:
+#   children:
+#     dns_servers:
+#       hosts:
+#         dnssiege:
+#           ip: "10.0.0.2/24"
+#           ansible_host: 192.168.1.10
+#           dhcp_subnet: "10.0.0.0/24"      # Sous-réseau spécifique pour DNS1
+#           dhcp_range_start: "10.0.0.100"   # Plage d'adresses pour DNS1
+#           dhcp_range_end: "10.0.0.200"    # Plage d'adresses pour DNS1
+#           dhcp_routers: "10.0.0.1"        # Routeur pour DNS1
+#         dns2:
+#           ip: "10.1.0.2/24"
+#           ansible_host: 192.168.1.20
+#           dhcp_subnet: "10.1.0.0/24"      # Sous-réseau spécifique pour DNS2
+#           dhcp_range_start: "10.1.0.100"   # Plage d'adresses pour DNS2
+#           dhcp_range_end: "10.1.0.200"    # Plage d'adresses pour DNS2
+#           dhcp_routers: "10.1.0.1"        # Routeur pour DNS2

@@ -1,0 +1,11 @@
+# Configuration de base du serveur DHCP
+
+subnet {{ dhcp_subnet }} netmask {{ dhcp_mask }} {
+  range {{ dhcp_range_start }} {{ dhcp_range_end }};
+  option domain-name "nfl-it.local";
+  option domain-name-servers {{ dhcp_dns }};
+  option routers {{ dhcp_routers }};
+  option subnet-mask 255.255.255.0;
+  default-lease-time 600;
+  max-lease-time 7200;
+}

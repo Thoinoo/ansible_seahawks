@@ -1,0 +1,11 @@
+zone "nfl-it.local" IN {
+    type master;
+    file "/etc/bind/db.nfl-it.local";  # Fichier de zone
+    allow-update { none; };  # Pas de mises à jour dynamiques autorisées
+    allow-query { 10.0.0.0/8; };
+};
+
+zone "0.0.10.in-addr.arpa" IN {
+    type master;
+    file "/etc/bind/db.10.0.0";  # Zone reverse pour 10.0.0.x
+};

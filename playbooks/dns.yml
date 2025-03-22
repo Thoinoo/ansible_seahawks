@@ -1,0 +1,8 @@
+---
+- name: dns config
+  hosts: dns
+  user: ansible
+  become: true
+
+  roles:
+    - ../roles/dns

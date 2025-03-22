@@ -1,0 +1,5 @@
+---
+- name: ("{{ package }}" | "{{ state }}")
+  ansible.builtin.apt:
+    name: "{{ package }}"
+    state: absent

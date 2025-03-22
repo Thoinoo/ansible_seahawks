@@ -1,0 +1,8 @@
+---
+- name: dnssiege
+  ansible.builtin.include_tasks: dnssiege.yml
+  when: inventory_hostname == 'dnssiege'
+
+- name: dnsroubaix
+  ansible.builtin.include_tasks: dnsroubaix.yml
+  when: inventory_hostname == 'dnsroubaix'
