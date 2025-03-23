@@ -1,8 +1,0 @@
----
-- name: playbook2
-  hosts: linux
-  user: ansible
-  become: true
-
-  roles:
-    - ../roles/roles1
