@@ -1,0 +1,18 @@
+---
+
+- name: check docker state
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Se connecter au GitLab Docker Registry
+  docker_login:
+    registry: "gitlab.nfl-it.local:5050"
+    username: "{{ gitlab_username }}"
+    password: "{{ gitlab_token }}"
+
+- name: Pull de l'image Docker
+  community.docker.docker_image:
+    name: "gitlab.nfl-it.local:5050/seahawks/harvester:main"
+    source: pull

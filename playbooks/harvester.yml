@@ -1,0 +1,8 @@
+---
+- name: pull harvester image
+  hosts: harvester
+  become: true
+  user: ansible
+
+  roles:
+    - ../roles/harvester

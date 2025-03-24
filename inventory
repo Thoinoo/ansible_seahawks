@@ -33,6 +33,10 @@ hostname_dns_siege="dnssiege"
 # dnsroubaix
 hostname_dns_roubaix="dnsroubaix"
 
+[harvester]
+harvester_client1 ansible_host=10.2.1.10
+
+### examples
 [linux]
 srv1 ansible_host=192.168.200.103 ansible_port=22
 #srv2 ansible_host=192.168.200.104
