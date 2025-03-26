@@ -28,6 +28,7 @@ dnssiege ansible_host=10.0.0.2
 dnsroubaix ansible_host=10.1.0.2
 
 nesterfront1 ansible_host=10.1.0.50
+nesterback1 ansible_host=10.1.0.60
 
 [hostname:vars]
 # dnssiege
@@ -36,12 +37,16 @@ hostname_dns_siege="dnssiege"
 hostname_dns_roubaix="dnsroubaix"
 
 hostname_nester_front_1="nesterfront1"
+hostname_nester_back_1="nesterback1"
 
 [harvester]
 harvester_client1 ansible_host=10.2.1.10
 
 [nester_front]
 nester_front_1 ansible_host=10.1.0.50
+
+[nester_back]
+nester_back_1 ansible_host=10.1.0.60
 
 ### examples
 [linux]
