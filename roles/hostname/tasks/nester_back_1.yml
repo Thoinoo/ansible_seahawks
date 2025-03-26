@@ -1,0 +1,33 @@
+---
+- name: Vérifier le nom d'hôte actuel
+  ansible.builtin.command:
+    cmd: hostname
+  register: current_hostname
+
+- name: Modifier le fichier /etc/hostname (si nécessaire)
+  ansible.builtin.lineinfile:
+    path: /etc/hostname
+    line: "{{ hostname_nester_back_1 }}"
+    create: yes
+  when: current_hostname.stdout != hostname_nester_back_1
+
+- name: Modifier le fichier /etc/hosts pour le nouveau nom d'hôte (si nécessaire)
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1   {{ hostname_nester_back_1 }}"
+  when: current_hostname.stdout != hostname_nester_back_1
+
+- name: Appliquer le changement du nom d'hôte (si nécessaire)
+  ansible.builtin.command:
+    cmd: hostnamectl set-hostname "{{ hostname_nester_back_1 }}"
+  when: current_hostname.stdout != hostname_nester_back_1
+
+- name: Redémarrer le système (si nécessaire) pour appliquer le nom d'hôte
+  ansible.builtin.reboot:
+    msg: "Redémarrage nécessaire pour appliquer le nom d'hôte"
+    pre_reboot_delay: 0
+    post_reboot_delay: 10
+    reboot_timeout: 300
+    test_command: whoami
+  when: hostname_nester_back_1 != "localhost" and current_hostname.stdout != hostname_nester_back_1  # Redémarrer seulement si nécessaire
