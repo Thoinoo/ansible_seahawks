@@ -1,0 +1,156 @@
+---
+- name: Installer Git sur une machine Debian/Ubuntu
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: yes
+
+
+- name: Cloner un dépôt Git
+  ansible.builtin.git:
+    repo: 'https://github.com/Thoinoo/mspr_nester_dashboard.git'   # URL du dépôt Git
+    dest: "{{ dashboard_path }}"                     # Chemin où cloner le dépôt
+    clone: yes                                                 # Cloner le dépôt s'il n'existe pas
+    update: yes                                                # Mettre à jour le dépôt si il existe déjà
+    version: 'main'                                            # (optionnel) Choisir la branche ou le tag à cloner
+
+
+- name: Vérifier si Node.js est installé
+  command: node -v
+  register: node_version
+  failed_when: false
+
+- name: Installer Node.js si nécessaire
+  apt:
+    name: nodejs
+    state: present
+  when: node_version.rc != 0
+
+- name: Vérifier si npm est installé
+  command: npm -v
+  register: npm_version
+  failed_when: false
+
+- name: Installer npm si nécessaire
+  apt:
+    name: npm
+    state: present
+  when: npm_version.rc != 0
+
+# - name: Se déplacer dans le répertoire du projet
+#   ansible.builtin.command:
+#     cmd: cd "{{ dashboard_path }}"
+
+- name: Créer le dossier certs
+  ansible.builtin.file:
+    path: "{{ project_dir }}/certs"
+    state: directory
+    mode: '0644'
+
+- name: Copier certificats
+  ansible.builtin.copy:
+    src: cert_nester.crt
+    dest: "{{ project_dir }}/certs"
+    decrypt: yes
+    mode: '0644'
+
+- name: Copier certificats
+  ansible.builtin.copy:
+    src: cert_nester.key
+    dest: "{{ project_dir }}/certs"
+    decrypt: yes
+    mode: '0644'
+
+- name: Installer les dépendances avec npm
+  command: npm install
+  args:
+    chdir: "{{ project_dir }}"
+
+
+### à creuser
+# - name: Créer un fichier de service systemd pour l'application
+#   ansible.builtin.template:
+#     src: dashboard.service.j2
+#     dest: /etc/systemd/system/dashboard.service
+# - name: Activer et démarrer le service systemd
+#   ansible.builtin.systemd:
+#     name: dashboard
+#     enabled: yes
+#     state: restarted
+
+- name: Changer le propriétaire et le groupe du dossier et de son contenu
+  ansible.builtin.file:
+    path: "{{ dashboard_path }}"
+    owner: ansible
+    group: ansible
+    recurse: yes
+
+
+
+- name: copie du fichier de démarrage
+  ansible.builtin.template:
+    src: start.sh.j2
+    dest: "{{ dashboard_path }}/start.sh"
+
+- name: Ajouter une tâche cron pour exécuter un script toutes les heures
+  ansible.builtin.cron:
+    name: "dashboard start"
+    special_time: "reboot"  # Cela fait en sorte que la tâche s'exécute au démarrage
+    job: "bash {{ dashboard_path }}/start.sh"
+    user: "root" 
+
+### installation nginx
+
+- name: Créer le dossier nester dans /etc/ssl
+  ansible.builtin.file:
+    path: "/etc/ssl/nester"
+    state: directory
+    mode: '0755'
+
+- name: copie du certificats crt
+  ansible.builtin.copy:
+    src: cert_nester.crt
+    dest: "/etc/ssl/nester/cert_nester.crt"
+    decrypt: yes
+    mode: '0644'
+
+- name: copie du certificats key
+  ansible.builtin.copy:
+    src: cert_nester.key
+    dest: "/etc/ssl/nester/cert_nester.key"
+    decrypt: yes
+    mode: '0644'
+
+- name: copie du certificats CA
+  ansible.builtin.copy:
+    src: siegeCA.crt
+    dest: "/etc/ssl/siegeCA.crt"
+    decrypt: yes
+    mode: '0644'
+
+- name: Installer Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Créer la configuration Nginx pour le proxy inverse avec SSL
+  ansible.builtin.copy:
+    src: nester-dashboard
+    dest: /etc/nginx/sites-available/nester-dashboard
+  notify:
+    - Reload nginx
+
+- name: Activer le site Nginx
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/nester-dashboard
+    dest: /etc/nginx/sites-enabled/nester-dashboard
+    state: link
+  notify:
+    - Reload nginx
+
+
+- name: Redémarrer le serveur
+  ansible.builtin.reboot:
+    reboot_timeout: 600  # Temps d'attente pour que le serveur redémarre (en secondes)
+    test_command: uptime 

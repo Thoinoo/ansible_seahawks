@@ -1,0 +1,12 @@
+[Unit]
+Description= nester dashboard
+After=network.target
+
+[Service]
+WorkingDirectory={{ project_dir }}
+ExecStart=/usr/bin/npm run dev
+Restart=always
+User=ansible
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+dashboard_path: "/home/ansible/dashboard"
+project_dir: "/home/ansible/dashboard/fastapi-dashboard"

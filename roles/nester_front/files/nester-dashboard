@@ -1,0 +1,34 @@
+server {
+    listen 443 ssl;
+    server_name nester.nfl-it.local;  # Remplacez par votre nom de domaine ou IP
+
+    # Configuration SSL
+    ssl_certificate /etc/ssl/nester/cert_nester.crt;
+    ssl_certificate_key /etc/ssl/nester/cert_nester.key;
+
+    # Sécuriser les connexions SSL
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
+    ssl_prefer_server_ciphers off;
+
+    # Rediriger le trafic HTTP vers HTTPS
+    location / {
+        proxy_pass http://localhost:3000;  # Redirige vers votre application Next.js locale (HTTP)
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+# Configuration pour rediriger HTTP vers HTTPS
+server {
+    listen 80;
+    server_name nester.nfl-it.local;  # Remplacez par votre nom de domaine ou IP
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
