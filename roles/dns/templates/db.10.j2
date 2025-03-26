@@ -1,0 +1,21 @@
+$TTL    604800
+@       IN      SOA     ns1.nfl-it.local. admin.nfl-it.local. (
+                          2025032101 ; Serial (date + version)
+                          86400      ; Refresh (24h)
+                          7200       ; Retry (2h)
+                          1209600    ; Expire (14 jours)
+                          86400 )    ; Minimum TTL (1 jour)
+
+; Serveur de noms
+@       IN      NS      ns1.nfl-it.local.
+
+; Définit l'origine de la zone pour l'inverse des adresses IP
+$ORIGIN 10.in-addr.arpa.
+
+; Enregistrements PTR
+
+{%- for host in hosts %}
+
+{{ host.rev }} IN PTR {{ host.name }}.nfl-it.local.
+
+{%- endfor %}

@@ -1,0 +1,20 @@
+zone "nfl-it.local" {
+    type master;
+    file "/var/lib/bind/db.nfl-it.local";  # Fichier de zone
+    allow-update { key DHCP_UPDATER; };
+    allow-query { any; };
+    # journal "/var/lib/bind/db.nfl-it.local.jnl";
+};
+
+zone "10.in-addr.arpa" {
+    type master;
+    file "/var/lib/bind/db.10";  # Zone reverse pour 10.0.0.0/8
+    allow-update { key DHCP_UPDATER; };
+    allow-query { any; };
+    # journal "/var/lib/bind/db.10.jnl";
+};
+
+key "DHCP_UPDATER" {
+    algorithm hmac-sha256;
+    secret "{{ dhcp_updater_key }}";  # La clé est injectée via Ansible
+};

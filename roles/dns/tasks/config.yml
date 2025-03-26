@@ -30,20 +30,44 @@
     mode: '0644'
 
 - name: Copier le fichier de configuration BIND9 (named.conf.local)
-  copy:
-    src: named.conf.local
+  template:
+    src: named.conf.local.j2
     dest: /etc/bind/named.conf.local
     owner: root
     group: root
     mode: '0644'
 
 - name: Copier la zone DNS db.nfl-it.local
-  copy:
-    src: db.nfl-it.local
-    dest: /etc/bind/db.nfl-it.local
-    owner: root
-    group: root
+  template:
+    src: db.nfl-it.local.j2
+    dest: /var/lib/bind/db.nfl-it.local
+    owner: bind
+    group: bind
     mode: '0644'
+
+- name: Copier la zone DNS db.10
+  template:
+    src: db.10.j2
+    dest: /var/lib/bind/db.10
+    owner: bind
+    group: bind
+    mode: '0644'
+
+# - name: Find all files in /var/lib/bind
+#   ansible.builtin.find:
+#     paths: /var/lib/bind
+#     recurse: yes
+#     file_type: file
+#   register: bind_files
+
+# - name: set ownership for Bind
+#   ansible.builtin.file:
+#     path: "{{ item.path }}"
+#     owner: bind
+#     group: bind
+#     mode: '0644'
+#   loop: "{{ bind_files.files }}"
+#   when: bind_files.matched > 0
 
 - name: Vérifier la configuration de Bind9
   command: named-checkconf

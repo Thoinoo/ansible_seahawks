@@ -1,5 +1,25 @@
 # Configuration de base du serveur DHCP
 
+ddns-update-style interim;
+allow client-updates;
+update-static-leases on;
+
+key DHCP_UPDATER {
+        algorithm HMAC-SHA256;
+        # generate key with sudo tsig-keygen -a HMAC-SHA256 DHCP_UPDATER
+        secret "{{ dhcp_updater_key }}"; 
+};
+
+zone nfl-it.local {
+  primary 127.0.0.1;
+  key DHCP_UPDATER;
+}
+
+zone 10.in-addr.arpa. {
+  primary 127.0.0.1;
+  key DHCP_UPDATER;
+}
+
 subnet {{ dhcp_subnet }} netmask {{ dhcp_mask }} {
   range {{ dhcp_range_start }} {{ dhcp_range_end }};
   option domain-name "nfl-it.local";
@@ -8,4 +28,8 @@ subnet {{ dhcp_subnet }} netmask {{ dhcp_mask }} {
   option subnet-mask 255.255.255.0;
   default-lease-time 600;
   max-lease-time 7200;
+
+  update-static-leases on;
+  allow client-updates;
 }
+

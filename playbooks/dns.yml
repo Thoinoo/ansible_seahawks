@@ -4,5 +4,7 @@
   user: ansible
   become: true
 
+  vars_files:
+    - "../roles/dns/vars/hosts.yml" 
   roles:
     - ../roles/dns

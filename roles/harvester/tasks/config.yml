@@ -16,3 +16,5 @@
   community.docker.docker_image:
     name: "gitlab.nfl-it.local:5050/seahawks/harvester:main"
     source: pull
+    state: present
+    force_source: true

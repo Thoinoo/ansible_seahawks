@@ -12,7 +12,6 @@ options {
     };
 
     listen-on { any; };  # Écouter sur toutes les interfaces
-    listen-on-v6 { any; };  # Écouter aussi en IPv6
 
     // Sécurisation DNS
     dnssec-validation auto;  # Validation DNSSEC automatique

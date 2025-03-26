@@ -14,11 +14,17 @@ $TTL    604800
 @       IN      A           10.0.0.2  
 ns1     IN      A           10.0.0.2
 ns2     IN      A           10.1.0.2
-nester.nfl-it.local. IN A   10.1.0.12
-gitlab.nfl-it.local. IN A 10.1.0.10
+
+{%- for host in hosts %}
+
+{{ host.name }} IN A {{ host.ip }}
+
+{%- endfor %}
+
 
 ; Enregistrements MX (Mail Exchange)
 @       IN      MX      10 mail.nfl-it.local.
 
 ; Enregistrement A pour le serveur de messagerie
 mail    IN      A       10.0.0.30
+
