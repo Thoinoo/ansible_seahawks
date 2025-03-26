@@ -1,3 +1,7 @@
 ---
 - name: config
-  ansible.builtin.include_tasks: config.yml
+  ansible.builtin.include_tasks: dashboard.yml
+- name: nginx install
+  ansible.builtin.include_tasks: nginx.yml
+- name: reboot 
+  ansible.builtin.include_tasks: reboot.yml
