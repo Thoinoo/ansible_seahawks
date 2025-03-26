@@ -1,0 +1,5 @@
+---
+- name: Redémarrer le serveur
+  ansible.builtin.reboot:
+    reboot_timeout: 600  # Temps d'attente pour que le serveur redémarre (en secondes)
+    test_command: uptime 

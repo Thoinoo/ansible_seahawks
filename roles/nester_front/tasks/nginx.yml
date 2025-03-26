@@ -1,0 +1,48 @@
+---
+- name: Créer le dossier nester dans /etc/ssl
+  ansible.builtin.file:
+    path: "/etc/ssl/nester"
+    state: directory
+    mode: '0755'
+
+- name: copie du certificats crt
+  ansible.builtin.copy:
+    src: cert_nester.crt
+    dest: "/etc/ssl/nester/cert_nester.crt"
+    decrypt: yes
+    mode: '0644'
+
+- name: copie du certificats key
+  ansible.builtin.copy:
+    src: cert_nester.key
+    dest: "/etc/ssl/nester/cert_nester.key"
+    decrypt: yes
+    mode: '0644'
+
+- name: copie du certificats CA
+  ansible.builtin.copy:
+    src: siegeCA.crt
+    dest: "/etc/ssl/siegeCA.crt"
+    decrypt: yes
+    mode: '0644'
+
+- name: Installer Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Créer la configuration Nginx pour le proxy inverse avec SSL
+  ansible.builtin.copy:
+    src: nester-dashboard
+    dest: /etc/nginx/sites-available/nester-dashboard
+  notify:
+    - Reload nginx
+
+- name: Activer le site Nginx
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/nester-dashboard
+    dest: /etc/nginx/sites-enabled/nester-dashboard
+    state: link
+  notify:
+    - Reload nginx
