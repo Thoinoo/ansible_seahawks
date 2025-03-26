@@ -6,3 +6,7 @@
 - name: dnsroubaix
   ansible.builtin.include_tasks: dnsroubaix.yml
   when: inventory_hostname == 'dnsroubaix'
+
+- name: nesterfront1
+  ansible.builtin.include_tasks: nester_front_1.yml
+  when: inventory_hostname == 'nesterfront1'

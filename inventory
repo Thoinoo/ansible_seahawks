@@ -27,14 +27,21 @@ dhcp_dns_roubaix="10.1.0.2, 10.0.0.2"
 dnssiege ansible_host=10.0.0.2
 dnsroubaix ansible_host=10.1.0.2
 
+nesterfront1 ansible_host=10.1.0.50
+
 [hostname:vars]
 # dnssiege
 hostname_dns_siege="dnssiege"
 # dnsroubaix
 hostname_dns_roubaix="dnsroubaix"
 
+hostname_nester_front_1="nesterfront1"
+
 [harvester]
 harvester_client1 ansible_host=10.2.1.10
+
+[nester_front]
+nester_front_1 ansible_host=10.1.0.50
 
 ### examples
 [linux]
