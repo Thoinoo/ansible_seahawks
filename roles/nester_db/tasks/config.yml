@@ -1,0 +1,84 @@
+---    
+
+# - name: Ajouter la ligne mysql_native_password=ON dans le fichier mysql.cnf
+#   ansible.builtin.lineinfile:
+#     path: /etc/mysql/conf.d/mysql.cnf
+#     regexp: '^\[mysql\]'
+#     line: |
+#       [mysql]
+#       mysql_native_password=ON
+#     insertafter: '[mysql]'  # Assurez-vous que la ligne est insérée après la section [mysql]
+#     state: absent
+
+- name: copier my.cnf 
+  template:
+    src: .my.cnf.j2
+    dest: /root/.my.cnf
+
+- name: Redémarrer le service MySQL pour appliquer les modifications
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+
+# - name: activer mysql_native_password
+#   mysql_query:
+#     query: "INSTALL PLUGIN musql_native_password SONAME 'auth_plugin_mysql_native_password.so';"
+#     login_unix_socket: "/var/run/mysqld/mysqld.sock"
+
+# - name: changer mot de passe root
+#   mysql_query:
+#     query: "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ root_password }}';"
+#     login_unix_socket: "/var/run/mysqld/mysqld.sock"
+
+
+
+# - name: changer type d'auth
+#   mysql_user: 
+#     name: "root"
+#     host: "localhost"
+#     password: "{{ root_password }}"
+#     login_unix_socket: "/var/run/mysqld/mysqld.sock"
+#     plugin: "mysql_native_password"
+#     state: present
+
+# - name: Set password for root user
+#   mysql_user:
+#     check_implicit_admin: true
+#     name: "root"
+#     password: "{{ root_password }}"
+#     priv: '*.*:ALL,GRANT'
+#     host: 'localhost'
+#     login_unix_socket: /var/run/mysqld/mysqld.sock
+#     state: present
+
+# 2. Créer une base de données MySQL
+- name: Créer une base de données MySQL
+  ansible.builtin.mysql_db:
+    check_implicit_admin: true
+    name: "{{ db_name }}"
+    state: present
+    login_user: root
+    login_password: "{{ root_password }}"
+
+- name: Créer un utilisateur MySQL
+  ansible.builtin.mysql_user:
+    name: "{{ user_db }}"
+    check_implicit_admin: true
+    password: "{{ user_password }}"
+    host: "%"
+    priv: "{{ db_name }}.*:ALL"
+    state: present
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+# # 3. Autoriser les connexions externes en modifiant le fichier my.cnf
+# - name: Autoriser les connexions externes à MySQL (modifier my.cnf)
+#   ansible.builtin.lineinfile:
+#     path: /etc/mysql/mysql.conf.d/mysqld.cnf
+#     regexp: '^bind-address'
+#     line: 'bind-address = 0.0.0.0'  # Écouter sur toutes les interfaces
+#     state: present
+#     notify:
+#       - Redémarrer MySQL
+

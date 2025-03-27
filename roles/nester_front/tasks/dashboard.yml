@@ -92,7 +92,7 @@
     src: start.sh.j2
     dest: "{{ dashboard_path }}/start.sh"
 
-- name: Ajouter une tâche cron pour exécuter un script toutes les heures
+- name: Ajouter une tâche cron pour lancer au démarrage
   ansible.builtin.cron:
     name: "dashboard start"
     special_time: "reboot"  # Cela fait en sorte que la tâche s'exécute au démarrage

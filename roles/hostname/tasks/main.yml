@@ -14,3 +14,7 @@
 - name: nesterback1
   ansible.builtin.include_tasks: nester_back_1.yml
   when: inventory_hostname == 'nesterback1'
+
+- name: nesterback1
+  ansible.builtin.include_tasks: nester_db_1.yml
+  when: inventory_hostname == 'nesterdb1'

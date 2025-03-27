@@ -1,6 +1,6 @@
 ---
 - name: hostname config
-  hosts: nester_front
+  hosts: nester_back
   user: ansible
   become: true
 

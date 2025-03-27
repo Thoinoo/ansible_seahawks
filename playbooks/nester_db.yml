@@ -1,0 +1,10 @@
+---
+- name: hostname config
+  hosts: nester_db
+  user: ansible
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  roles:
+    - ../roles/nester_db
