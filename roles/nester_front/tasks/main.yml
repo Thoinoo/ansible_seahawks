@@ -3,5 +3,7 @@
   ansible.builtin.include_tasks: dashboard.yml
 - name: nginx install
   ansible.builtin.include_tasks: nginx.yml
+- name: fail over
+  ansible.builtin.include_tasks: failover.yml
 - name: reboot 
   ansible.builtin.include_tasks: reboot.yml

@@ -1,0 +1,24 @@
+---
+- name: set roles
+  set_fact:
+    is_master: "{{ inventory_hostname == 'nester_front_1' }}"
+
+- name: Install keepalived
+  ansible.builtin.package:
+    name: keepalived
+    state: present
+
+- name: configure keepalived
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart keepalived
+
+- name: ensure keepalived is running and at boot
+  service:
+    name: keepalived
+    state: started
+    enabled: yes

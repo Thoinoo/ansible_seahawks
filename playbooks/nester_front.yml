@@ -3,6 +3,7 @@
   hosts: nester_front
   user: ansible
   become: true
-
+  vars_files:
+    - ../roles/nester_front/vars/keepalived.yml
   roles:
     - ../roles/nester_front

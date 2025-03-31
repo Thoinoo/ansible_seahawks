@@ -5,5 +5,6 @@
   become: true
   vars_files:
     - "../roles/nester_db/vars/main.yml" 
+    - "../roles/nester_back/vars/keepalived.yml"
   roles:
     - ../roles/nester_back
