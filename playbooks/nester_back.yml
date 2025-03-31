@@ -3,6 +3,7 @@
   hosts: nester_back
   user: ansible
   become: true
-
+  vars_files:
+    - "../roles/nester_db/vars/main.yml" 
   roles:
     - ../roles/nester_back

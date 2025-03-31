@@ -1,0 +1,4 @@
+#! /bin/bash
+cd {{ api_path }}
+source {{ api_path }}/venv/bin/activate
+uvicorn app:app --host 0.0.0.0 --port 57935 --reload --ssl-keyfile=/etc/ssl/nester/cert_api.key --ssl-certfile=/etc/ssl/nester/cert_api.crt

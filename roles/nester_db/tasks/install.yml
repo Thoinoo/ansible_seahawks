@@ -39,10 +39,10 @@
     name: python3-pymysql
     state: present
 
-- name: Installer mysqldb
-  ansible.builtin.apt:
-    name: python3-mysqldb
-    state: present
+# - name: Installer mysqldb
+#   ansible.builtin.apt:
+#     name: python3-mysqldb
+#     state: present
 
 
 

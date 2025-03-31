@@ -1,0 +1,2 @@
+db_ip: 10.1.0.71
+api_path: "/home/ansible/api"
