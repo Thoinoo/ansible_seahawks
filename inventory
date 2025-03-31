@@ -23,35 +23,26 @@ dhcp_range_end_roubaix="10.1.0.200"
 dhcp_routers_roubaix="10.1.0.1"
 dhcp_dns_roubaix="10.1.0.2, 10.0.0.2"
 
-[hostname]
-dnssiege ansible_host=10.0.0.2
-dnsroubaix ansible_host=10.1.0.2
-
-nesterfront1 ansible_host=10.1.0.51
-nesterback1 ansible_host=10.1.0.61
-nesterdb1 ansible_host=10.1.0.71
-
-[hostname:vars]
-# dnssiege
-hostname_dns_siege="dnssiege"
-# dnsroubaix
-hostname_dns_roubaix="dnsroubaix"
-
-hostname_nester_front_1="nesterfront1"
-hostname_nester_back_1="nesterback1"
-hostname_nester_db_1="nesterdb1"
+[hostname:children]
+dns
+nester_front
+nester_back
+nester_db
 
 [harvester]
 harvester_client1 ansible_host=10.2.1.10
 
 [nester_front]
 nester_front_1 ansible_host=10.1.0.51
+nester_front_2 ansible_host=10.1.0.52
 
 [nester_back]
 nester_back_1 ansible_host=10.1.0.61
+nester_back_2 ansible_host=10.1.0.62
 
 [nester_db]
 nester_db_1 ansible_host=10.1.0.71
+nester_db_2 ansible_host=10.1.0.72
 
 ### examples
 [linux]

@@ -1,2 +1,2 @@
-db_ip: 10.1.0.71
+db_ip: nester-db.nfl-it.local
 api_path: "/home/ansible/api"
