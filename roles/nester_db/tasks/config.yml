@@ -4,18 +4,33 @@
     src: .my.cnf.j2
     dest: /root/.my.cnf
 
-- name: copier ansible.cnf
-  ansible.builtin.copy:
-    src: ansible.cnf
-    dest: /etc/mysql/conf.d/ansible.cnf
+- name: copier mysql.cnf
+  ansible.builtin.template:
+    src: mysql.cnf.j2
+    dest: /etc/mysql/conf.d/mysql.cnf
 
-- name: Redémarrer le service MySQL pour appliquer les modifications
-  ansible.builtin.systemd:
-    name: mysql
+- name: restart mysql
+  service:
+    name: mysql 
     state: restarted
 
 
-# 2. Créer une base de données MySQL
+- name: Créer un utilisateur pour la replication
+  ansible.builtin.mysql_user:
+    name: "{{ replication_user }}"
+    password: "{{ replication_password }}"
+    host: "%"
+    priv: "*.*:REPLICATION SLAVE"
+    column_case_sensitive: false
+    state: present
+    config_file: "/root/.my.cnf"
+    login_host: "localhost"
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  when: inventory_hostname in groups['nester_db_master']
+
+
 - name: Créer une base de données MySQL
   ansible.builtin.mysql_db:
     name: "{{ db_name }}"
@@ -25,6 +40,7 @@
     login_user: root
     login_password: "{{ root_password }}"
     login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  when: inventory_hostname in groups['nester_db_master']
 
 - name: Créer un utilisateur MySQL
   ansible.builtin.mysql_user:

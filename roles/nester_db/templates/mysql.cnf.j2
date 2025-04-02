@@ -1,0 +1,19 @@
+[mysqld]
+mysql_native_password=ON
+bind-address = 0.0.0.0
+
+{% if inventory_hostname in groups['nester_db_master'] %}
+# Configuration pour le serveur maître
+server-id = 1
+{% endif %}
+
+{% if inventory_hostname in groups['nester_db_slave'] %}
+# Configuration pour le serveur slave
+server-id = {{ ansible_hostname | hash('sha256') | int(0, 16) % 1000 }}
+relay-log = /var/log/mysql/relay.log
+{% endif %}
+
+
+log_bin = /var/log/mysql/mysql-bin.log
+max_binlog_size = 100M
+binlog_do_db = nester

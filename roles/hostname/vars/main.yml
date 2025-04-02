@@ -19,3 +19,5 @@ hostnames:
     ip: 10.1.0.71
   - name: nesterdb2
     ip: 10.1.0.72
+  - name: nesterdb3
+    ip: 10.1.0.73

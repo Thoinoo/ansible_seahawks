@@ -39,6 +39,11 @@
     name: python3-pymysql
     state: present
 
+- name: Installer galera-3
+  ansible.builtin.apt:
+    name: galera-3
+    state: absent
+
 # - name: Installer mysqldb
 #   ansible.builtin.apt:
 #     name: python3-mysqldb

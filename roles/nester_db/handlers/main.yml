@@ -1,5 +1,5 @@
 ---
-- name: Redémarrer MySQL
+- name: Restart MySQL
   ansible.builtin.service:
     name: mysql
     state: restarted

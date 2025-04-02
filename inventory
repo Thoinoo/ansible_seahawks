@@ -40,9 +40,16 @@ nester_front_2 ansible_host=10.1.0.52
 nester_back_1 ansible_host=10.1.0.61
 nester_back_2 ansible_host=10.1.0.62
 
-[nester_db]
-nester_db_1 ansible_host=10.1.0.71
-nester_db_2 ansible_host=10.1.0.72
+[nester_db:children]
+nester_db_master
+nester_db_slave
+
+[nester_db_master]
+nester_db_1 ansible_host=10.1.0.71 id=1 mysql_replication_role=master
+
+[nester_db_slave]
+nester_db_2 ansible_host=10.1.0.72 id=2 mysql_replication_role=slave
+nester_db_3 ansible_host=10.1.0.73 id=3 mysql_replication_role=slave
 
 ### examples
 [linux]

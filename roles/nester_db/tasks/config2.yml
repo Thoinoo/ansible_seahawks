@@ -1,0 +1,108 @@
+---
+# - name: Update apt cache
+#   apt:
+#     update_cache: yes
+
+# - name: Install MySQL server
+#   apt:
+#     name: mysql-server
+#     state: present
+
+
+
+# - name: Set MySQL root password
+#   mysql_user:
+#     name: root
+#     password: "{{ mysql_root_password }}"
+#     host: "{{ item }}"
+#     priv: "*.*:ALL"
+#     state: present
+#   loop:
+#     - "{{ ansible_hostname }}"
+
+- name: Copy MySQL master config file (on master server only)
+  template:
+    src: "mysql.cnf.j2"
+    dest: "/etc/mysql/conf.d/mysql.cnf"
+  when: inventory_hostname in groups['nester_db_master']
+
+- name: Copy MySQL slave config file (on slave servers only)
+  template:
+    src: "mysql.cnf.j2"
+    dest: "/etc/mysql/conf.d/mysql.cnf"
+  when: inventory_hostname in groups['nester_db_slave']
+
+- name: Restart MySQL server to apply configuration
+  service:
+    name: mysql
+    state: restarted
+
+
+# - name: Create replication user on master
+#   mysql_user:
+#     name: "{{ replication_user }}"
+#     password: "{{ replication_password }}"
+#     host: "%"
+#     priv: "*.*:REPLICATION SLAVE"
+#     state: present
+#   when: ansible_host == 10.1.0.71
+
+
+- name: Get the master's binary log file position
+  mysql_query:
+    query: "SHOW BINARY LOG STATUS;"
+    config_file: "/root/.my.cnf"
+    login_host: "localhost"
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  register: master_status
+  changed_when: false
+  when: inventory_hostname in groups['nester_db_master']
+
+- name: Set master log file and position
+  set_fact:
+    master_log_file: "{{ master_status.query_result[0][0].File }}"
+    master_log_pos: "{{ master_status.query_result[0][0].Position }}"
+  when: inventory_hostname in groups['nester_db_master']
+ 
+
+- name: Debug master status output
+  debug:
+    var: hostvars[groups['nester_db_master'][0]]['master_log_file']
+- name: Debug master status output
+  debug:
+    var: hostvars[groups['nester_db_master'][0]]['master_log_pos']
+
+
+# - name: Configure slave for replication
+#   mysql_replication:
+#     mode: getreplica
+#     master_host: "{{ init_db }}"
+#     master_user: "{{ replication_user }}"
+#     master_password: "{{ replication_password }}"
+#     master_log_file: "{{ hostvars[groups['nester_db_master'][0]]['master_log_file'] }}"
+#     master_log_pos: "{{ hostvars[groups['nester_db_master'][0]]['master_log_pos'] }}"
+#     config_file: "/root/.my.cnf"
+#     login_host: "localhost"
+#     login_user: root
+#     login_password: "{{ root_password }}"
+#     login_unix_socket: "/var/run/mysqld/mysqld.sock"
+#   when: inventory_hostname in groups['nester_db_slave']
+
+
+- name: set slave parameters
+  mysql_query:
+    query: "{{ item }}"
+    config_file: "/root/.my.cnf"
+    login_host: "localhost"
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  when: inventory_hostname in groups['nester_db_slave']
+  loop:
+    - "STOP REPLICA;"
+    - "CHANGE REPLICATION SOURCE TO SOURCE_HOST='{{ init_db }}', SOURCE_USER='{{ replication_user }}', SOURCE_PASSWORD='{{ replication_password }}', SOURCE_LOG_FILE='{{ hostvars[groups['nester_db_master'][0]]['master_log_file'] }}', SOURCE_LOG_POS={{ hostvars[groups['nester_db_master'][0]]['master_log_pos'] }};"
+    - "START REPLICA;"
+
+
