@@ -1,0 +1,35 @@
+---
+- name: Install dependencies
+  apt:
+    name:
+      - curl
+      - wget
+      - lsb-release
+      - dpkg
+    state: present
+    update_cache: true
+
+- name: Copy orchestrator .deb file to target machine
+  copy:
+    src: orchestrator_3.2.6_amd64.deb
+    dest: /tmp/orchestrator_3.2.6_amd64.deb
+
+- name: Install Orchestrator CLI .deb package
+  apt:
+    deb: /tmp/orchestrator_3.2.6_amd64.deb
+    state: present
+
+- name: Fix missing dependencies (if any)
+  command: apt-get install -f -y
+  when: ansible_facts.os_family == "Debian"
+
+- name: Ensure Orchestrator CLI is executable
+  command: orchestrator --version
+  register: orchestrator_cli_version
+  changed_when: false
+  failed_when: false
+
+- name: Display Orchestrator CLI version
+  debug:
+    var: orchestrator_cli_version.stdout
+

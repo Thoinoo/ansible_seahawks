@@ -1,0 +1,13 @@
+[Unit]
+Description=Orchestrator MySQL Replication Management
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/orchestrator -c /etc/orchestrator/orchestrator.conf.json
+User=root
+Group=root
+Restart=always
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

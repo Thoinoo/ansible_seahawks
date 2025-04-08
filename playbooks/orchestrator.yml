@@ -1,0 +1,9 @@
+---
+- name: orchsetrator config
+  hosts: orchestrator
+  user: ansible
+  become: true
+  vars_files:
+    - ../roles/nester_db/vars/main.yml
+  roles:
+    - ../roles/orchestrator

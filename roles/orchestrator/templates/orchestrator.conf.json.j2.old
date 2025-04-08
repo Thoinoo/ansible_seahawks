@@ -1,0 +1,25 @@
+{
+  "cluster_name": "mycluster",
+  "listen_address": "0.0.0.0:3000",
+  "mysql_servers": [
+    {% for host in groups['nester_db'] %}
+      {
+        "host": "{{ hostvars[host].ansible_host }}",
+        "port": 3306,
+        "username": "root",
+        "password": "{{ root_password }}"
+      }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  "web": {
+    "enable": true,
+    "address": ":3000",
+    "title": "Orchestrator"
+  },
+  "failover": {
+    "enable": true,
+    "auto_failover": true,
+    "monitoring_username": "root",
+    "monitoring_password": "motdepasse_mysql"
+  }
+}
