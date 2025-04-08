@@ -5,5 +5,7 @@
   become: true
   vars:
     ansible_python_interpreter: /usr/bin/python3
+  vars_files:
+    - ../roles/orchestrator/vars/main.yml
   roles:
     - ../roles/nester_db

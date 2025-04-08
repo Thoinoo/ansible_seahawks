@@ -21,3 +21,6 @@ hostnames:
     ip: 10.1.0.72
   - name: nesterdb3
     ip: 10.1.0.73
+
+  - name: orchestrator
+    ip: 10.1.0.49

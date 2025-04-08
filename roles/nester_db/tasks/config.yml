@@ -15,6 +15,21 @@
     state: restarted
 
 
+
+- name: Créer un utilisateur pour orchestrator
+  ansible.builtin.mysql_user:
+    name: "{{ orchestrator_user }}"
+    password: "{{ orchestrator_password }}"
+    host: "%"
+    priv: "*.*:ALL"
+    column_case_sensitive: false
+    state: present
+    config_file: "/root/.my.cnf"
+    login_host: "localhost"
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+
 - name: Créer un utilisateur pour la replication
   ansible.builtin.mysql_user:
     name: "{{ replication_user }}"
@@ -30,6 +45,17 @@
     login_unix_socket: "/var/run/mysqld/mysqld.sock"
   when: inventory_hostname in groups['nester_db_master']
 
+
+- name: Créer une base de données orchestrator
+  ansible.builtin.mysql_db:
+    name: "orchestrator"
+    state: present
+    config_file: "/root/.my.cnf"
+    login_host: "localhost"
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  when: inventory_hostname in groups['nester_db_master']
 
 - name: Créer une base de données MySQL
   ansible.builtin.mysql_db:
