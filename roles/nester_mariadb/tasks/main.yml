@@ -1,0 +1,5 @@
+---
+- name: install
+  ansible.builtin.include_tasks: install.yml
+- name: keepalived
+  ansible.builtin.include_tasks: failover.yml

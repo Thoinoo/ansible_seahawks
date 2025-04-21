@@ -1,0 +1,12 @@
+user_db: "ansible"
+user_password: "ansible"
+db_name : "nester"
+root_password: "root"
+
+replication_user: "replication"
+replication_password: "password"
+
+init_db: '10.1.0.71'
+
+keepalived_pass: "sqdfqsdf"
+virtual_ip: '10.1.0.70'

@@ -1,0 +1,64 @@
+---
+- name: Install mariadb
+  apt:
+    name: 
+      - mariadb-server
+      - galera-4
+      - python3-pymysql
+    state: present
+    update_cache: true
+
+
+- name: copy of galera.cnf
+  ansible.builtin.template:
+    src: 60-galera.cnf.j2
+    dest: /etc/mysql/mariadb.conf.d/60-galera.cnf
+
+
+- name: Stop MariaDB service
+  ansible.builtin.systemd:
+    name: mariadb
+    state: stopped
+  #when: inventory_hostname in groups['nester_db_master']
+
+- name: sed safe_to_bootstrap
+  command: 
+    cmd: "sed -i 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/' /var/lib/mysql/grastate.dat"
+  when: inventory_hostname in groups['nester_db_master']
+
+- name: Initialize a new Galera cluster
+  ansible.builtin.command:
+    cmd: "galera_new_cluster"
+  when: inventory_hostname in groups['nester_db_master']
+
+- name: restart mariadb on slave 
+  service:
+    name: mariadb 
+    state: restarted 
+  when: inventory_hostname in groups['nester_db_slave']
+
+- name: copy setup file 
+  template: 
+    src: setup.sql.j2
+    dest: /home/ansible/setup.sql
+  when: inventory_hostname in groups['nester_db_master']
+
+
+# - name: execute setup 
+#   command: "mysql < /home/ansible/setup.sql"
+#   when: inventory_hostname in groups['nester_db_master']
+
+# - name: Créer un utilisateur pour la replication
+#   ansible.builtin.mysql_user:
+#     name: "{{ user_db }}"
+#     password: "{{ user_password }}"
+#     host: "%"
+#     priv: "*.*:REPLICATION SLAVE"
+#     column_case_sensitive: false
+#     state: present
+#     config_file: "/root/.my.cnf"
+#     login_host: "localhost"
+#     login_user: root
+#     login_password: "{{ root_password }}"
+#     login_unix_socket: "/var/run/mysqld/mysqld.sock"
+#   when: inventory_hostname in groups['nester_db_master']

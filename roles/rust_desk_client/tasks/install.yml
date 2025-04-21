@@ -1,0 +1,11 @@
+---
+- name: copie fichier
+  copy: 
+    src: rustdesk-1.3.9-x86_64.deb
+    dest: /home/sadmin/rustdesk-1.3.9-x86_64.deb
+
+- name: Installer le package .deb et ses dépendances
+  apt:
+    deb: /home/sadmin/rustdesk-1.3.9-x86_64.deb
+    state: present  # Assurez-vous que le package est installé
+    update_cache: yes  # Met à jour le cache APT avant l'installation

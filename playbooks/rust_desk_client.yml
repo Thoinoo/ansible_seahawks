@@ -1,0 +1,7 @@
+---
+- name: run desk client
+  hosts: run_desk_client
+  user: ansible
+  become: true
+  roles:
+    - ../roles/rust_desk_client
