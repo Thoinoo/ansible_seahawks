@@ -28,10 +28,14 @@ dns
 nester_front
 nester_back
 nester_db
-orchestrator
+rust_desk_server
+bastion
+
 
 [harvester]
 harvester_client1 ansible_host=10.2.1.10
+
+
 
 [nester_front]
 nester_front_1 ansible_host=10.1.0.51
@@ -54,6 +58,13 @@ nester_db_3 ansible_host=10.1.0.73 id=3 mysql_replication_role=slave
 
 [orchestrator]
 mysql-orchestrator ansible_host=10.1.0.49
+
+[rust_desk_server]
+rust_desk_srv1 ansible_host=10.1.0.25
+
+
+[bastion]
+guacamole ansible_host=10.1.0.24
 
 ### examples
 [linux]

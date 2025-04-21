@@ -24,3 +24,9 @@ hostnames:
 
   - name: orchestrator
     ip: 10.1.0.49
+
+  - name: rustdeskserver
+    ip: 10.1.0.25
+
+  - name: guacamole
+    ip: 10.1.0.24

@@ -11,6 +11,17 @@
 
 - name: Copy orchestrator .deb file to target machine
   copy:
+    src: orchestrator-cli_3.2.6_amd64.deb
+    dest: /tmp/orchestrator-cli_3.2.6_amd64.deb
+
+- name: Install Orchestrator CLI .deb package
+  apt:
+    deb: /tmp/orchestrator-cli_3.2.6_amd64.deb
+    state: present
+
+
+- name: Copy orchestrator .deb file to target machine
+  copy:
     src: orchestrator_3.2.6_amd64.deb
     dest: /tmp/orchestrator_3.2.6_amd64.deb
 
