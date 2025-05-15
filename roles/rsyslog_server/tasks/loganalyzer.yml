@@ -1,0 +1,50 @@
+---
+- name: Mettre à jour les paquets
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Installer Apache, PHP et modules nécessaires
+  apt:
+    name:
+      - apache2
+      - php
+      - php-cli
+      - php-mbstring
+      - php-mysql
+    state: present
+
+
+- name: Télécharger LogAnalyzer
+  get_url:
+    url: "https://download.adiscon.com/loganalyzer/loganalyzer-{{ loganalyzer_version }}.tar.gz"
+    dest: "/tmp/loganalyzer-{{ loganalyzer_version }}.tar.gz"
+
+- name: Extraire LogAnalyzer
+  unarchive:
+    src: "/tmp/loganalyzer-{{ loganalyzer_version }}.tar.gz"
+    dest: "/var/www/html/"
+    remote_src: yes
+
+- name: Définir les permissions appropriées
+  file:
+    path: "/var/www/html/loganalyzer-{{ loganalyzer_version }}/src"
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: yes
+
+- name: Renommer le répertoire LogAnalyzer
+  command:
+    cmd: mv /var/www/html/loganalyzer-{{ loganalyzer_version }} /var/www/html/loganalyzer
+
+- name: Nettoyer les fichiers temporaires
+  file:
+    path: "/tmp/loganalyzer-{{ loganalyzer_version }}.tar.gz"
+    state: absent
+
+- name: Redémarrer Apache
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes

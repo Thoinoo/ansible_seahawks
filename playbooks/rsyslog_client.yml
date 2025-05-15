@@ -1,0 +1,7 @@
+---
+- name: rsyslog client
+  hosts: rsyslog_client
+  user: ansible
+  become: true
+  roles:
+    - ../roles/rsyslog_client

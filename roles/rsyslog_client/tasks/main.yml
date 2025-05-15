@@ -1,0 +1,24 @@
+---
+- name: Installer rsyslog
+  apt:
+    name: rsyslog
+    state: present
+    update_cache: yes
+
+- name: Créer la config rsyslog pour envoi vers serveur
+  file:
+    path: /etc/rsyslog.d/90-remote.conf
+    state: absent
+
+- name: Créer la config rsyslog pour envoi vers serveur
+  copy:
+    dest: /etc/rsyslog.d/10-graylog.conf
+    content: |
+      *.* @{{ rsyslog_server_ip }}:12514;RSYSLOG_SyslogProtocol23Format
+   
+
+- name: Redémarrer rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: yes

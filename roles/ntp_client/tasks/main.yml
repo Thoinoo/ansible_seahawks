@@ -1,0 +1,29 @@
+---
+- name: Installer chrony
+  apt:
+    name: chrony
+    state: present
+    update_cache: yes
+
+- name: Configurer chrony avec le serveur NTP interne
+  lineinfile:
+    path: /etc/chrony/chrony.conf
+    regexp: '^server\s+'
+    line: "server {{ ntp_server_ip }} iburst"
+    insertafter: '^#.*Use public servers'
+    state: present
+    create: yes
+    backup: yes
+
+- name: Supprimer les autres serveurs publics (optionnel)
+  replace:
+    path: /etc/chrony/chrony.conf
+    regexp: '^server .* iburst'
+    replace: ''
+  when: ntp_server_ip is defined
+
+- name: Redémarrer chrony
+  systemd:
+    name: chrony
+    state: restarted
+    enabled: yes

@@ -1,0 +1,38 @@
+# rsyslog_server.yml
+---
+- name: Installer rsyslog
+  apt:
+    name: rsyslog
+    state: present
+    update_cache: yes
+
+- name: Activer réception UDP et TCP dans rsyslog.conf
+  lineinfile:
+    path: /etc/rsyslog.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - { regexp: '^#?module\(load="imudp"\)', line: 'module(load="imudp")' }
+    - { regexp: '^#?input\(type="imudp" port="514"\)', line: 'input(type="imudp" port="514")' }
+    - { regexp: '^#?module\(load="imtcp"\)', line: 'module(load="imtcp")' }
+    - { regexp: '^#?input\(type="imtcp" port="514"\)', line: 'input(type="imtcp" port="514")' }
+
+- name: Ajouter la configuration pour stocker les logs distants
+  copy:
+    dest: /etc/rsyslog.d/10-remote.conf
+    src: 60-remote-logs.conf
+
+- name: Créer le dossier de logs distants
+  file:
+    path: /var/log/remote
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
+
+- name: Redémarrer rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: yes

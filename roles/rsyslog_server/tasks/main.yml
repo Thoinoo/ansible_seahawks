@@ -1,0 +1,5 @@
+---
+- name: rsyslog
+  ansible.builtin.include_tasks: rsyslog.yml
+- name: LogAnalyzer
+  ansible.builtin.include_tasks: loganalyzer.yml
